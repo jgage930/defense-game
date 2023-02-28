@@ -1,5 +1,5 @@
 Features To Make It a Playable Game
-    - Enemy attack state
+    - Enemy attack state: DONE
         - When enmey hits the wall, move to attack state
         - When attack animation is finished, damage wall
 
