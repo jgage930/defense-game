@@ -1,0 +1,25 @@
+Features To Make It a Playable Game
+    - Enemy attack state
+        - When enmey hits the wall, move to attack state
+        - When attack animation is finished, damage wall
+
+    - Game States
+        - Main Menu
+        - Gameplay
+        - End State
+
+    - Score System
+        - Get points for killing skeletons
+
+    - UI
+        - Display wall health 
+        - display score
+
+    - Difficulty Curve
+        - Need to make a wave system for enemies that gets
+        progressively more difficult
+
+    
+Features That Will Be Nice, But Can Wait
+    - Upgrade System
+
