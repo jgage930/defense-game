@@ -11,6 +11,7 @@ pub struct GameTextures {
     pub enemy_walk: Handle<TextureAtlas>,
     pub enemy_idle: Handle<TextureAtlas>,
     pub enemy_death: Handle<TextureAtlas>,
+    pub enemy_attack: Handle<TextureAtlas>,
     pub wall: Handle<Image>,
 }
 
@@ -20,6 +21,7 @@ pub const FIREBALL_SPRITE: &str = "fireball.png";
 pub const ENEMY_WALK: &str = "enemy/enemy_walk.png";
 pub const ENEMY_IDLE: &str = "enemy/enemy_idle.png";
 pub const ENEMY_DEATH: &str = "enemy/enemy_death.png";
+pub const ENEMY_ATTACK: &str = "enemy/enemy_attack.png";
 pub const WALL: &str = "wall.png";
 
 pub fn setup(
@@ -33,6 +35,7 @@ pub fn setup(
     let enemy_walk_handle: Handle<Image> = asset_server.load(ENEMY_WALK);
     let enemy_idle_handle: Handle<Image> = asset_server.load(ENEMY_IDLE);
     let enemy_death_handle: Handle<Image> = asset_server.load(ENEMY_DEATH);
+    let enemy_attack_handle: Handle<Image> = asset_server.load(ENEMY_ATTACK);
     let wall_handle: Handle<Image> = asset_server.load(WALL);
 
     let enemy_walk_atlas =
@@ -64,10 +67,21 @@ pub fn setup(
             None,
             None
         );
+    
+    let enemy_attack_atlas =
+        TextureAtlas::from_grid(
+            enemy_attack_handle, 
+            Vec2::new(43., 37.),
+            18,
+            1,
+            None,
+            None
+        );
 
     let enemy_walk_atlas_handle = texture_atlases.add(enemy_walk_atlas);
     let enemy_idle_atlas_handle = texture_atlases.add(enemy_idle_atlas);
     let enemy_death_atlas_handle = texture_atlases.add(enemy_death_atlas);
+    let enemy_attack_atlas_handle = texture_atlases.add(enemy_attack_atlas);
 
     // Load in game textures
     let game_textures = GameTextures {
@@ -76,6 +90,7 @@ pub fn setup(
         enemy_walk: enemy_walk_atlas_handle,
         enemy_idle: enemy_idle_atlas_handle,
         enemy_death: enemy_death_atlas_handle,
+        enemy_attack: enemy_attack_atlas_handle,
         wall: wall_handle,
     };
     commands.insert_resource(game_textures);
