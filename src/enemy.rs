@@ -112,14 +112,13 @@ fn state_transitions(
     mut query: Query<(Entity, &mut EnemyState, &mut Enemy, &Transform)>,
 ) {
     for (_enemy_entity, mut enemy_state, enemy, transform) in query.iter_mut() {
-        if enemy.health() <= 0. {
-            *enemy_state = EnemyState::Death;
-        }
-
         if transform.translation.x >= Wall::LEFT - Wall::SIZE {
             *enemy_state = EnemyState::Attack;
         }
 
+        if enemy.health() <= 0. {
+            *enemy_state = EnemyState::Death;
+        }
     }
 }
 
@@ -166,7 +165,16 @@ fn animate_enemy_sprite(
                 }
             },
             EnemyState::Attack => {
+                if sprite.index >= 17 {
+                    sprite.index = 0;
+                }
+                let atlas = game_textures.enemy_attack.clone();
+                *texture_atlas_handle = atlas;
 
+                if timer.just_finished() {
+                    let texture_atlas = texture_atlases.get(&texture_atlas_handle).unwrap();
+                    sprite.index = (sprite.index + 1) % texture_atlas.textures.len();
+                }
             }
         };
     }
