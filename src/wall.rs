@@ -12,7 +12,7 @@ impl Plugin for WallPlugin {
     }
 }
 
-#[derive(Component)]
+#[derive(Resource)]
 pub struct Wall {
     health: f32,
 }
@@ -21,7 +21,7 @@ impl Wall {
     pub const LEFT: f32 = 600.;
     pub const SIZE: f32 = 64.;
 
-    fn apply_damage(&mut self, damage: f32) {
+    pub fn apply_damage(&mut self, damage: f32) {
         self.health -= damage;
     }
 
@@ -42,6 +42,8 @@ fn spawn_wall (
     mut commands: Commands,
     game_textures: Res<GameTextures>,
 ) {
+    commands.insert_resource(Wall::default());
+
     for y in (-500..500).step_by(64) {
         commands.spawn(SpriteBundle {
             texture: game_textures.wall.clone(),

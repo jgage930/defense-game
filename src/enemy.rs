@@ -130,8 +130,9 @@ fn animate_enemy_sprite(
     mut commands: Commands,
     time: Res<Time>,
     texture_atlases: Res<Assets<TextureAtlas>>,
-    mut query: Query<(Entity, &EnemyState, &mut AnimationTimer, &mut TextureAtlasSprite, &mut Handle<TextureAtlas>,)>,
+    mut query: Query<(Entity, &EnemyState, &mut AnimationTimer, &mut TextureAtlasSprite, &mut Handle<TextureAtlas>)>,
     game_textures: Res<GameTextures>,
+    mut wall: ResMut<Wall>,
 ) {
     for (entity, enemy_state, mut timer, mut sprite, mut texture_atlas_handle) in &mut query {
         timer.tick(time.delta());
@@ -167,9 +168,12 @@ fn animate_enemy_sprite(
             EnemyState::Attack => {
                 if sprite.index >= 17 {
                     sprite.index = 0;
+                    wall.apply_damage(10.);
                 }
+                
                 let atlas = game_textures.enemy_attack.clone();
                 *texture_atlas_handle = atlas;
+
 
                 if timer.just_finished() {
                     let texture_atlas = texture_atlases.get(&texture_atlas_handle).unwrap();
