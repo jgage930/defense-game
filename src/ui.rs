@@ -54,69 +54,64 @@ fn update_hud(
     text.sections[1].value = format!("${} \n", player.wealth());
 }
 
+#[derive(Component)]
+enum ButtonType {
+    RepairWall,
+    UpgradeDamage,
+    UpgradeWall,
+}
+
 fn spawn_upgrade_buttons(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let size = Size::new(Val::Px(150.), Val::Px(50.));
-    let margin = UiRect::all(Val::Auto);
-    let justify_content = JustifyContent::Center;
-    let align_items = AlignItems::Center;
-    let position = UiRect::new(Val::Px(-700.), Val::Px(450.), Val::Px(-550.), Val::Px(400.));
+    let font: Handle<Font> = asset_server.load("font.ttf");
 
-    let style = Style {
-        size,
-        margin,
-        justify_content,
-        align_items,
-        ..default()
-    };
+    let button_text = [
+        "Repair Wall $100",
+        "Upgrade Damage $800",
+        "Upgrade Wall $1000",
+    ];
 
     commands
-        .spawn(ButtonBundle {
-            style: style.clone(),
-            transform: Transform::from_xyz(-1500., 400., 200.),
+        .spawn(NodeBundle {
+            style: Style {
+                size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                justify_content: JustifyContent::Center,
+                ..default()
+            },
+            background_color: Color::NONE.into(),
             ..default()
         })
-        .with_children(|parent| {
-            parent.spawn(TextBundle::from_section(
-                "Repair Wall \n $100",
-                TextStyle {
-                    font: asset_server.load("font.ttf"),
-                    font_size: 20.,
-                    color: Color::rgb(0., 0., 0.),
-                },
-            ));
-        });
+        .with_children(|commands| {
+            for i in 0..3 {
+                let text = button_text[i];
+                let button_type = match i {
+                    1 => ButtonType::RepairWall,
+                    2 => ButtonType::UpgradeDamage,
+                    3 => ButtonType::UpgradeWall,
+                    _ => ButtonType::RepairWall,
+                };
 
-    commands
-        .spawn(ButtonBundle {
-            style: style.clone(),
-            transform: Transform::from_xyz(-1500., 400., 200.),
-            ..default()
-        })
-        .with_children(|parent| {
-            parent.spawn(TextBundle::from_section(
-                "Upgrade Damage \n $800",
-                TextStyle {
-                    font: asset_server.load("font.ttf"),
-                    font_size: 20.,
-                    color: Color::rgb(0., 0., 0.),
-                },
-            ));
-        });
-
-    commands
-        .spawn(ButtonBundle {
-            style: style.clone(),
-            transform: Transform::from_xyz(-1500., 400., 200.),
-            ..default()
-        })
-        .with_children(|parent| {
-            parent.spawn(TextBundle::from_section(
-                "Upgrade Wall Health \n $1000",
-                TextStyle {
-                    font: asset_server.load("font.ttf"),
-                    font_size: 20.,
-                    color: Color::rgb(0., 0., 0.),
-                },
-            ));
+                commands
+                    .spawn(ButtonBundle {
+                        style: Style {
+                            size: Size::new(Val::Px(190.), Val::Px(30.)),
+                            align_self: AlignSelf::FlexStart,
+                            margin: UiRect::all(Val::Percent(2.)),
+                            justify_content: JustifyContent::Center,
+                            ..default()
+                        },
+                        ..default()
+                    })
+                    .with_children(|parent| {
+                        parent.spawn(TextBundle::from_section(
+                            text,
+                            TextStyle {
+                                font: font.clone(),
+                                font_size: 20.,
+                                color: Color::BLACK,
+                            },
+                        ));
+                    })
+                    .insert(button_type);
+            }
         });
 }
