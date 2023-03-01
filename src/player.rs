@@ -18,6 +18,13 @@ impl Plugin for PlayerPlugin {
 #[derive(Component)]
 pub struct Player {
     speed: f32,
+    wealth: usize,
+}
+
+impl Player {
+    pub fn wealth(&self) -> usize {
+        self.wealth
+    }
 }
 
 fn spawn_player(
@@ -39,6 +46,7 @@ fn spawn_player(
     })
     .insert(Player {
         speed: 300.,
+        wealth: 0,
     });
 }
 
