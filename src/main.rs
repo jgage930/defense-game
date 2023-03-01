@@ -11,7 +11,7 @@ use commons::setup;
 use player::PlayerPlugin;
 use enemy::EnemyPlugin;
 use collisions::CollisionPlugin;
-use wall::{WallPlugin, Wall};
+use wall::WallPlugin;
 use ui::UiPlugin;
 
 fn main() {
@@ -33,12 +33,5 @@ fn main() {
         .add_plugin(WallPlugin)
         .add_plugin(UiPlugin)
         .add_startup_system_to_stage(StartupStage::PreStartup, setup)
-        .add_system(print_wall_health)
         .run();
-}
-
-fn print_wall_health(
-    wall: Res<Wall>,
-) {
-    println!("Wall Health {}", wall.health());
 }
