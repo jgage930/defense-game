@@ -47,7 +47,7 @@ impl Default for Enemy {
 }
 
 #[derive(Component)]
-enum EnemyState {
+pub enum EnemyState {
     Walk,
     Death,
     Attack,

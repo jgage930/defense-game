@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use std::default::Default;
 
 use crate::commons::GameTextures;
+use crate::enemy::{Enemy, EnemyState};
 
 pub struct PlayerPlugin;
 
@@ -11,7 +12,8 @@ impl Plugin for PlayerPlugin {
             .add_startup_system(spawn_player)
             .add_system(movement_player)
             .add_system(shoot)
-            .add_system(movement_projectile);
+            .add_system(movement_projectile)
+            .add_system(add_wealth_system);
     }
 }
 
@@ -24,6 +26,10 @@ pub struct Player {
 impl Player {
     pub fn wealth(&self) -> usize {
         self.wealth
+    }
+
+    pub fn add_wealth(&mut self, amount: usize) {
+        self.wealth += amount;
     }
 }
 
@@ -139,6 +145,20 @@ fn movement_projectile(
 
         if transform.translation.x < -800. {
             commands.entity(entity).despawn();
+        }
+    }
+}
+
+fn add_wealth_system(
+    query: Query<(&Enemy, &EnemyState)>,
+    mut player_query: Query<&mut Player>,
+) {
+    let mut player = player_query.single_mut();
+
+    for (_enemy, state) in query.iter() {
+        match state {
+            EnemyState::Death => player.add_wealth(1),
+            _ => {}
         }
     }
 }
