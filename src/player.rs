@@ -8,8 +8,7 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
-        app
-            .add_startup_system(spawn_player)
+        app.add_startup_system(spawn_player)
             .add_system(movement_player)
             .add_system(shoot)
             .add_system(movement_projectile)
@@ -31,29 +30,31 @@ impl Player {
     pub fn add_wealth(&mut self, amount: usize) {
         self.wealth += amount;
     }
+
+    pub fn spend(&mut self, amount: usize) {
+        self.wealth -= amount;
+    }
 }
 
-fn spawn_player(
-    mut commands: Commands,
-    game_textures: Res<GameTextures>,
-) {
-    commands.spawn(SpriteBundle {
-        texture: game_textures.player.clone(),
-        sprite: Sprite { 
-            custom_size: Some(Vec2::new(80., 80.)), 
+fn spawn_player(mut commands: Commands, game_textures: Res<GameTextures>) {
+    commands
+        .spawn(SpriteBundle {
+            texture: game_textures.player.clone(),
+            sprite: Sprite {
+                custom_size: Some(Vec2::new(80., 80.)),
 
+                ..Default::default()
+            },
+            transform: Transform {
+                translation: Vec3::new(750., 100., 10.),
+                ..Default::default()
+            },
             ..Default::default()
-        },
-        transform: Transform {
-            translation: Vec3::new(750., 100., 10.),
-            ..Default::default()
-        },
-        ..Default::default()
-    })
-    .insert(Player {
-        speed: 300.,
-        wealth: 0,
-    });
+        })
+        .insert(Player {
+            speed: 300.,
+            wealth: 0,
+        });
 }
 
 fn movement_player(
@@ -68,7 +69,7 @@ fn movement_player(
 
     if keyboard.pressed(KeyCode::Up) {
         if y + dy + 40. < 385. {
-        transform.translation.y += dy;
+            transform.translation.y += dy;
         }
     }
 
@@ -118,20 +119,21 @@ fn shoot(
     let (_player, transform) = player_query.single();
     if keyboard.just_pressed(KeyCode::Space) {
         // spawn a fireball at player position
-        commands.spawn(SpriteBundle {
-            texture: game_textures.fireball.clone(),
-            sprite: Sprite {
-                custom_size: Some(Vec2::new(100., 50.)),
+        commands
+            .spawn(SpriteBundle {
+                texture: game_textures.fireball.clone(),
+                sprite: Sprite {
+                    custom_size: Some(Vec2::new(100., 50.)),
+                    ..default()
+                },
+                transform: Transform {
+                    translation: Vec3::new(transform.translation.x, transform.translation.y, 100.),
+                    ..default()
+                },
                 ..default()
-            },
-            transform: Transform {
-                translation: Vec3::new(transform.translation.x, transform.translation.y, 100.),
-                ..default()
-            },
-            ..default()
-        })
-        .insert(Fireball)
-        .insert(Projectile::default());
+            })
+            .insert(Fireball)
+            .insert(Projectile::default());
     }
 }
 
@@ -149,10 +151,7 @@ fn movement_projectile(
     }
 }
 
-fn add_wealth_system(
-    query: Query<(&Enemy, &EnemyState)>,
-    mut player_query: Query<&mut Player>,
-) {
+fn add_wealth_system(query: Query<(&Enemy, &EnemyState)>, mut player_query: Query<&mut Player>) {
     let mut player = player_query.single_mut();
 
     for (_enemy, state) in query.iter() {
@@ -162,3 +161,4 @@ fn add_wealth_system(
         }
     }
 }
+

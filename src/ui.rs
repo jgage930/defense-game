@@ -9,6 +9,7 @@ impl Plugin for UiPlugin {
         app.add_startup_system(spawn_hud)
             .add_startup_system(spawn_upgrade_buttons)
             .add_system(update_hud)
+            .add_system(click_button_system)
             .insert_resource(WinitSettings::game());
     }
 }
@@ -57,7 +58,6 @@ fn update_hud(
 #[derive(Component)]
 enum ButtonType {
     RepairWall,
-    UpgradeDamage,
     UpgradeWall,
 }
 
@@ -81,12 +81,11 @@ fn spawn_upgrade_buttons(mut commands: Commands, asset_server: Res<AssetServer>)
             ..default()
         })
         .with_children(|commands| {
-            for i in 0..3 {
+            for i in 0..2 {
                 let text = button_text[i];
                 let button_type = match i {
-                    1 => ButtonType::RepairWall,
-                    2 => ButtonType::UpgradeDamage,
-                    3 => ButtonType::UpgradeWall,
+                    0 => ButtonType::RepairWall,
+                    1 => ButtonType::UpgradeWall,
                     _ => ButtonType::RepairWall,
                 };
 
@@ -114,4 +113,36 @@ fn spawn_upgrade_buttons(mut commands: Commands, asset_server: Res<AssetServer>)
                     .insert(button_type);
             }
         });
+}
+
+fn click_button_system(
+    query: Query<(&Interaction, &ButtonType), (Changed<Interaction>, With<Button>)>,
+    mut player_query: Query<&mut Player>,
+    mut wall: ResMut<Wall>,
+) {
+    let mut player = player_query.single_mut();
+
+    for (interaction, button_type) in query.iter() {
+        match *interaction {
+            Interaction::Clicked => {
+                match button_type {
+                    ButtonType::RepairWall => {
+                        let cost: usize = 100;
+                        if player.wealth() >= cost {
+                            player.spend(cost);
+                            wall.repair();
+                        }
+                    }
+                    ButtonType::UpgradeWall => {
+                        let cost: usize = 1000;
+                        if player.wealth() >= cost {
+                            player.spend(cost);
+                            wall.upgrade_max_health();
+                        }
+                    }
+                };
+            }
+            _ => {}
+        };
+    }
 }

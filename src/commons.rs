@@ -39,44 +39,16 @@ pub fn setup(
     let wall_handle: Handle<Image> = asset_server.load(WALL);
 
     let enemy_walk_atlas =
-        TextureAtlas::from_grid(
-            enemy_walk_handle, 
-            Vec2::new(22., 32.),
-            13,
-            1,
-            None,
-            None 
-        );
+        TextureAtlas::from_grid(enemy_walk_handle, Vec2::new(22., 32.), 13, 1, None, None);
 
     let enemy_idle_atlas =
-        TextureAtlas::from_grid(
-            enemy_idle_handle, 
-            Vec2::new(24., 32.),
-            15,
-            1,
-            None,
-            None
-        );
+        TextureAtlas::from_grid(enemy_idle_handle, Vec2::new(24., 32.), 15, 1, None, None);
 
     let enemy_death_atlas =
-        TextureAtlas::from_grid(
-            enemy_death_handle, 
-            Vec2::new(33., 32.),
-            11,
-            1,
-            None,
-            None
-        );
-    
+        TextureAtlas::from_grid(enemy_death_handle, Vec2::new(33., 32.), 11, 1, None, None);
+
     let enemy_attack_atlas =
-        TextureAtlas::from_grid(
-            enemy_attack_handle, 
-            Vec2::new(43., 37.),
-            18,
-            1,
-            None,
-            None
-        );
+        TextureAtlas::from_grid(enemy_attack_handle, Vec2::new(43., 37.), 18, 1, None, None);
 
     let enemy_walk_atlas_handle = texture_atlases.add(enemy_walk_atlas);
     let enemy_idle_atlas_handle = texture_atlases.add(enemy_idle_atlas);
@@ -85,8 +57,8 @@ pub fn setup(
 
     // Load in game textures
     let game_textures = GameTextures {
-        player: asset_server.load(PLAYER_SPRITE), 
-        fireball: asset_server.load(FIREBALL_SPRITE), 
+        player: asset_server.load(PLAYER_SPRITE),
+        fireball: asset_server.load(FIREBALL_SPRITE),
         enemy_walk: enemy_walk_atlas_handle,
         enemy_idle: enemy_idle_atlas_handle,
         enemy_death: enemy_death_atlas_handle,
@@ -95,7 +67,9 @@ pub fn setup(
     };
     commands.insert_resource(game_textures);
 
-    commands.insert_resource(EnemySpawnTimer(
-        Timer::new(Duration::from_secs(5), TimerMode::Repeating)
-    ));
+    commands.insert_resource(EnemySpawnTimer(Timer::new(
+        Duration::from_secs(2),
+        TimerMode::Repeating,
+    )));
 }
+
